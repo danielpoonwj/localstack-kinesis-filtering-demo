@@ -1,0 +1,19 @@
+{
+  "name": "localstack-kinesis-filtering-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-danielpoonwj:danielpoonwj/localstack-kinesis-filtering-demo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.22.0",
+    "serverless-localstack": "^1.0.0"
+  }
+}
