@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  localstack:
+    image: localstack/localstack:1.2.0
+    environment:
+      - EDGE_PORT=4566
+      # https://docs.localstack.cloud/localstack/configuration/#kinesis
+      - LAMBDA_EXECUTOR=local
+      - LAMBDA_REMOTE_DOCKER=false
+      # https://docs.localstack.cloud/localstack/configuration/#kinesis
+      - KINESIS_LATENCY=0
+      - DEFAULT_REGION=us-east-1
+      - EAGER_SERVICE_LOADING=0
+      - DEBUG=0
+    ports:
+      # https://docs.localstack.cloud/localstack/external-ports/
+      - '4510-4559:4510-4559'
+      # edge port
+      - '4566:4566'
+    volumes:
+      - './.localstack:/var/lib/localstack'
+      - './.docker-compose/localstack/docker-entrypoint-initaws.d:/docker-entrypoint-initaws.d'
