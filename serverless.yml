@@ -1,0 +1,73 @@
+custom:
+  localstack:
+    stages:
+      - dev
+    # Access exposed host/port on docker-compose
+    host: http://localhost
+    edgePort: 4566
+    autostart: false
+    lambda:
+      mountCode: false
+
+service: localstack-kinesis-filtering-demo
+
+frameworkVersion: '3'
+
+# https://www.serverless.com/framework/docs/configuration-validation
+configValidationMode: error
+
+# https://www.serverless.com/framework/docs/environment-variables
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-east-1
+  # https://www.serverless.com/framework/docs/providers/aws/guide/deploying#deployment-method
+  deploymentMethod: direct
+
+functions:
+  function-1:
+    handler: src.handlers.function_1_handler
+    events:
+      - stream:
+          type: kinesis
+          arn: arn:aws:kinesis:${self:provider.region}:${aws:accountId}:stream/demo
+          batchSize: 100
+          parallelizationFactor: 1
+          maximumRecordAgeInSeconds: 604800
+          startingPosition: LATEST
+          maximumRetryAttempts: 10
+          bisectBatchOnFunctionError: false
+          enabled: true
+          filterPatterns:
+            - data:
+                event_type:
+                  - function_1
+
+  function-2:
+    handler: src.handlers.function_2_handler
+    events:
+      - stream:
+          type: kinesis
+          arn: arn:aws:kinesis:${self:provider.region}:${aws:accountId}:stream/demo
+          batchSize: 100
+          parallelizationFactor: 1
+          maximumRecordAgeInSeconds: 604800
+          startingPosition: LATEST
+          maximumRetryAttempts: 10
+          bisectBatchOnFunctionError: false
+          enabled: true
+          filterPatterns:
+            - data:
+                event_type:
+                  - function_2
+
+package:
+  patterns:
+    - '!./**'
+    - ./src/**
+
+plugins:
+  - serverless-localstack
